@@ -1,0 +1,147 @@
+---
+title: "Rebound Analysis"
+output: html_document
+date: "2026-09-07"
+---
+
+# Dataset
+
+This report uses the attached `games.csv` dataset, It contains historical NBA game results and team statistics. My research question is whether a team's rebounding advantage is related to its point differential. I hypothesize that teams with a higher rebound differential will also have a higher point differential.
+
+https://www.kaggle.com/datasets/nathanlauga/nba-games?select=games.csv
+
+```{r}
+nba <- read.csv("games.csv")
+
+head(nba)
+```
+
+# Q1: Plotting a Graph
+
+```{r}
+average_points <- c(
+  mean(nba$PTS_home, na.rm = TRUE),
+  mean(nba$PTS_away, na.rm = TRUE)
+)
+
+barplot(
+  average_points,
+  names.arg = c("Home Teams", "Away Teams"),
+  col = c("blue", "orange"),
+  main = "Average Points Scored by Home and Away Teams",
+  xlab = "Team Location",
+  ylab = "Average Points Scored",
+  ylim = c(0, 120)
+)
+```
+
+This bar plot compares the average points scored by home and away teams. The home team scored approximately 103 points per game, while away teams scored 101 points. This suggest home teams score more on average than away teams.
+
+# Q2: Statistical Calculation
+
+```{r}
+nba$REB_DIFF <- nba$REB_home - nba$REB_away
+nba$POINT_DIFF <- nba$PTS_home - nba$PTS_away
+
+rebound_statistics <- c(
+  Mean = mean(nba$REB_DIFF, na.rm = TRUE),
+  Median = median(nba$REB_DIFF, na.rm = TRUE),
+  Standard_Deviation = sd(nba$REB_DIFF, na.rm = TRUE)
+)
+
+round(rebound_statistics, 2)
+```
+
+The mean rebound differential was 1.26, meaning home teams collected about 1.26 more rebounds than away teams per game on average. The median was 1 rebound, while the standard deviation was 8.98 rebounds. This shows that the typical rebound difference was small, but the amount of variation between games was much larger.
+
+# Q3: Correlation Between Rebound and Point Differential
+
+```{r}
+analysis_data <- nba[
+  complete.cases(nba$REB_DIFF, nba$POINT_DIFF),
+]
+
+correlation_result <- cor.test(
+  analysis_data$REB_DIFF,
+  analysis_data$POINT_DIFF
+)
+
+correlation_result
+
+rebound_model <- lm(
+  POINT_DIFF ~ REB_DIFF,
+  data = analysis_data
+)
+
+summary(rebound_model)
+
+plot(
+  analysis_data$REB_DIFF,
+  analysis_data$POINT_DIFF,
+  main = "Rebound Differential and Point Differential",
+  xlab = "Rebound Differential",
+  ylab = "Point Differential",
+  pch = 16,
+  col = rgb(0, 0, 1, 0.2)
+)
+
+abline(
+  rebound_model,
+  col = "orange",
+  lwd = 2
+)
+```
+
+The correlation was 0.456, which denotes a moderates positive relationship between the rebound differential and the point differential. The R-squared was 0.208, meaning that the rebound differential could explain 20.8% of the differences in the scoring margin. The p-value is less than 2.2e-16, and hence the relationship is statistically significant. From the slope of the regression line above, one would conclude that the point differentials were higher where the team had higher rebounds compared to its opponent team.
+
+# Q4: Distribution of Point Differential
+
+```{r}
+point_diff_data <- na.omit(nba$POINT_DIFF)
+
+hist(
+  point_diff_data,
+  breaks = 30,
+  main = "Distribution of Home-Team Point Differential",
+  xlab = "Point Differential",
+  ylab = "Number of Games",
+  col = "steelblue",
+  border = "white"
+)
+
+abline(
+  v = mean(point_diff_data),
+  col = "red",
+  lwd = 2,
+  lty = 2
+)
+
+legend(
+  "topright",
+  legend = "Mean",
+  col = "red",
+  lwd = 2,
+  lty = 2
+)
+```
+
+The histogram is roughly bell-shaped and centered slightly above zero. Most games had point differentials near the center, while very large wins or losses were less common. The red dashed line shows that the mean point differential was approximately 2.82 points, meaning home teams scored about 2.82 more points than away teams on average. Since the distribution is roughly symmetric and the dataset contains many observations, a t-test was used in the next analysis.
+
+# Q5: T-Test by Rebounding Advantage
+
+```{r}
+nba$REB_GROUP <- ifelse(
+  nba$REB_DIFF > 0,
+  "Rebound Advantage",
+  "No Rebound Advantage"
+)
+
+t_test_result <- t.test(
+  POINT_DIFF ~ REB_GROUP,
+  data = nba
+)
+
+t_test_result
+```
+
+In the case of the t-test, it indicated that there exists a significant difference between the two groups. In this case, the value of p was less than 2.2e-16. The mean of the point difference for home teams without a rebounding advantage was -2.32, while that of the home teams with rebounding advantage was 7.31. In this case, the difference was approximately 9.63 points. Since the value of p was less than 0.05, the results support my hypothesis.
