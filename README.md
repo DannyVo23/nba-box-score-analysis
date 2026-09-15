@@ -1,6 +1,6 @@
 # NBA Box Score Analysis
 
-This project analyzes which NBA box-score statistic are most strongly associated with point differential and winning.
+This project analyzes which NBA box-score statistics are most strongly associated with point differential and winning.
 
 ## Project Overview
 
@@ -26,4 +26,4 @@ The first part of the project examines whether rebound differential is related t
 
 ## Reports
 ### Rebound Analysis
-- [View Report HTML Report](https://dannyvo23.github.io/nba-box-score-analysis/rebound-analysis.html)
+- [View Rebound Analysis HTML Report](https://dannyvo23.github.io/nba-box-score-analysis/rebound-analysis.html)
