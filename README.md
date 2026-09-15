@@ -25,4 +25,6 @@ The CSV file for the project is [games.csv](games.csv)
 The first part of the project examines whether rebound differential is related to point differential. Correlation, linear regression, a histogram, and a t-test are used to analyze this relationship.
 
 ## Reports
-- [View the Rebound Analysis Report](https://dannyvo23.github.io/nba-box-score-analysis/rebound-analysis.html)
+### Rebound Analysis
+- [View Report HTML Report](https://dannyvo23.github.io/nba-box-score-analysis/rebound-analysis.html)
+- [View Report RMD Report](https://dannyvo23.github.io/nba-box-score-analysis/rebound-analysis.Rmd)
