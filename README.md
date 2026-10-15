@@ -27,3 +27,6 @@ The first part of the project examines whether rebound differential is related t
 ## Reports
 ### Rebound Analysis
 - [View Rebound Analysis HTML Report](https://dannyvo23.github.io/nba-box-score-analysis/rebound-analysis.html)
+
+### D3 Visualization
+[View NBA Rebounds Comparison](d3/)
